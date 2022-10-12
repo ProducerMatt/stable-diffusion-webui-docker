@@ -31,6 +31,7 @@ ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1 PIP_NO_CACHE_DIR=1
 
 RUN pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 
+# RUN sed -i "s#deb http://deb.debian.org/debian \(\w+\) main#deb http://deb.debian.org/debian \1 main contrib non-free devel#g" /etc/apt/sources.list
 RUN apt-get update && apt install fonts-dejavu-core rsync git -y && apt-get clean
 
 
@@ -48,7 +49,15 @@ ENV ROOT=/stable-diffusion-webui \
 COPY --from=download /git/ ${ROOT}
 RUN pip install --prefer-binary --no-cache-dir -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
-RUN apt install build-essential ninja-build -y && apt-get clean
+ENV TORCH_CUDA_ARCH_LIST=6.1 FORCE_CUDA="1"
+RUN <<EOF
+apt install software-properties-common -y
+add-apt-repository contrib
+add-apt-repository non-free
+apt-get update
+apt install g++-9 ninja-build nvidia-cuda-toolkit -y
+apt-get clean
+EOF
 RUN <<EOF
 cd ${ROOT}/repositories/xformers
 pip install --prefer-binary --no-cache-dir setuptools==49.6.0
