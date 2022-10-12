@@ -9,6 +9,8 @@ RUN git clone https://github.com/sczhou/CodeFormer.git repositories/CodeFormer &
 RUN git clone https://github.com/salesforce/BLIP.git repositories/BLIP && cd repositories/BLIP && git reset --hard 48211a1594f1321b00f14c9f7a5b4813144b2fb9
 # RUN git clone https://github.com/Hafiidz/latent-diffusion.git repositories/latent-diffusion && cd repositories/latent-diffusion && git reset --hard abf33e7002d59d9085081bce93ec798dcabd49af
 
+RUN git clone https://github.com/facebookresearch/xformers.git repositories/xformers && cd repositories/xformers && git submodule update --init --recursive
+
 RUN <<EOF
 # because taming-transformers is huge
 git config --global http.postBuffer 1048576000
@@ -46,6 +48,14 @@ ENV ROOT=/stable-diffusion-webui \
 COPY --from=download /git/ ${ROOT}
 RUN pip install --prefer-binary --no-cache-dir -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
+RUN apt install build-essential ninja-build -y && apt-get clean
+RUN <<EOF
+cd ${ROOT}/repositories/xformers
+pip install --prefer-binary --no-cache-dir setuptools==49.6.0
+pip install --prefer-binary --no-cache-dir -r requirements.txt
+pip install --prefer-binary --no-cache-dir -e .
+EOF
+
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
 
@@ -75,4 +85,4 @@ WORKDIR ${WORKDIR}
 EXPOSE 7860
 # run, -u to not buffer stdout / stderr
 CMD /docker/mount.sh && \
-  python3 -u ../../webui.py --listen --port 7860 --hide-ui-dir-config --ckpt-dir ${ROOT}/models/Stable-diffusion ${CLI_ARGS}
+  python3 -u ../../webui.py --listen --port 7860 --hide-ui-dir-config --ckpt-dir ${ROOT}/models/Stable-diffusion --xformers ${CLI_ARGS}
