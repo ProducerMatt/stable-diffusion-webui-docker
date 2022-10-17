@@ -8,6 +8,7 @@ RUN git clone https://github.com/CompVis/stable-diffusion.git repositories/stabl
 
 RUN git clone https://github.com/sczhou/CodeFormer.git repositories/CodeFormer && cd repositories/CodeFormer && git reset --hard c5b4593074ba6214284d6acd5f1719b6c5d739af
 RUN git clone https://github.com/salesforce/BLIP.git repositories/BLIP && cd repositories/BLIP && git reset --hard 48211a1594f1321b00f14c9f7a5b4813144b2fb9
+RUN git clone https://github.com/deforum-art/deforum-for-automatic1111-webui repositories/deforum-for-auto && cd repositories/deforum-for-auto && git reset --hard 245f0535d3549d969707ceabc903b2b2a182d55d
 
 RUN <<EOF
 # because taming-transformers is huge
@@ -78,6 +79,8 @@ RUN <<EOF
 chmod +x /docker/mount.sh && python3 /docker/info.py ${ROOT}/modules/ui.py
 EOF
 
+RUN cp -r ${ROOT}/repositories/deforum-for-auto/deforum* ${ROOT}/scripts/
+RUN FORCE_CUDA=1 CUDA_HOME=${CUDA_PATH} pip install --prefer-binary --no-cache-dir py3d "git+https://github.com/facebookresearch/pytorch3d.git@stable"
 
 ENV CLI_ARGS=""
 WORKDIR ${WORKDIR}
