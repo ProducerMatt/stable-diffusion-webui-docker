@@ -9,6 +9,7 @@ RUN git clone https://github.com/CompVis/stable-diffusion.git repositories/stabl
 RUN git clone https://github.com/sczhou/CodeFormer.git repositories/CodeFormer && cd repositories/CodeFormer && git reset --hard c5b4593074ba6214284d6acd5f1719b6c5d739af
 RUN git clone https://github.com/salesforce/BLIP.git repositories/BLIP && cd repositories/BLIP && git reset --hard 48211a1594f1321b00f14c9f7a5b4813144b2fb9
 RUN git clone https://github.com/deforum-art/deforum-for-automatic1111-webui repositories/deforum-for-auto && cd repositories/deforum-for-auto && git reset --hard 245f0535d3549d969707ceabc903b2b2a182d55d
+#RUN git clone https://github.com/MSFTserver/pytorch3d-lite repositories/pytorch3d-lite && cd repositories/pytorch3d-lite && git reset --hard 4070975c1d6e4de7c87848a53b603f6b29711e55
 
 RUN <<EOF
 # because taming-transformers is huge
@@ -79,8 +80,26 @@ RUN <<EOF
 chmod +x /docker/mount.sh && python3 /docker/info.py ${ROOT}/modules/ui.py
 EOF
 
+#RUN <<EOF
+#apt-get install software-properties-common gpg wget ninja-build -y
+## Warning: software-properties-common installed Python 3.9
+##update-alternatives --install /usr/bin/python python /usr/bin/python3.10 100
+#add-apt-repository contrib
+#apt-key del 7fa2af80
+#
+#wget https://developer.download.nvidia.com/compute/cuda/repos/debian11/x86_64/cuda-keyring_1.0-1_all.deb
+#dpkg -i cuda-keyring_1.0-1_all.deb
+#
+#apt-get update
+#apt-get install cuda-nvcc-11-8 cuda-libraries-dev-11-8 -y
+#EOF
+#
+#RUN FORCE_CUDA=1 TORCH_CUDA_ARCH_LIST="6.1" pip install "git+https://github.com/facebookresearch/pytorch3d.git@stable"
+#RUN FORCE_CUDA=1 CUDA_HOME=${CUDA_PATH} pip install --prefer-binary --no-cache-dir py3d "git+https://github.com/facebookresearch/pytorch3d.git@stable"
 RUN cp -r ${ROOT}/repositories/deforum-for-auto/deforum* ${ROOT}/scripts/
-RUN FORCE_CUDA=1 CUDA_HOME=${CUDA_PATH} pip install --prefer-binary --no-cache-dir py3d "git+https://github.com/facebookresearch/pytorch3d.git@stable"
+RUN pip install --prefer-binary --no-cache-dir -r ${ROOT}/repositories/deforum-for-auto/requirements.txt
+
+#RUN cp ${ROOT}/repositories/pytorch3d-lite/py3d_tools.py ${ROOT}/scripts/deforum/
 
 ENV CLI_ARGS=""
 WORKDIR ${WORKDIR}
