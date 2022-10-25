@@ -8,6 +8,7 @@ RUN git clone https://github.com/CompVis/stable-diffusion.git repositories/stabl
 
 RUN git clone https://github.com/sczhou/CodeFormer.git repositories/CodeFormer && cd repositories/CodeFormer && git reset --hard c5b4593074ba6214284d6acd5f1719b6c5d739af
 RUN git clone https://github.com/salesforce/BLIP.git repositories/BLIP && cd repositories/BLIP && git reset --hard 48211a1594f1321b00f14c9f7a5b4813144b2fb9
+RUN git clone https://github.com/deforum-art/deforum-for-automatic1111-webui.git extensions/deforum && cd extensions/deforum && git reset --hard 753893492521fa7f50c328976692be6834fcef65
 
 RUN <<EOF
 # because taming-transformers is huge
@@ -76,6 +77,8 @@ RUN pip install opencv-python-headless \
 
 COPY --from=xformers /wheel.whl xformers-0.0.14.dev0-cp310-cp310-linux_x86_64.whl
 RUN pip install xformers-0.0.14.dev0-cp310-cp310-linux_x86_64.whl
+
+RUN cd ${ROOT}/extensions/deforum && pip install -r requirements.txt
 
 COPY . /docker
 
