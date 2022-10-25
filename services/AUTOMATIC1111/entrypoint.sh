@@ -4,6 +4,7 @@ set -Eeuo pipefail
 
 # TODO: move all mkdir -p ?
 mkdir -p /data/config/auto/scripts/
+
 cp -n /docker/config.json /data/config/auto/config.json
 jq '. * input' /data/config/auto/config.json /docker/config.json | sponge /data/config/auto/config.json
 
