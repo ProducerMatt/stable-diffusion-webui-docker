@@ -29,7 +29,7 @@ services:
     build: ./services/AUTOMATIC1111
     image: sd-auto:17
     environment:
-      - CLI_ARGS=--allow-code --medvram --xformers
+      - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru
 
   auto-cpu:
     <<: *automatic
