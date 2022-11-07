@@ -30,6 +30,7 @@ services:
     image: sd-auto:16
     environment:
       - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru --administrator
+      - DEEPDANBOORU=1
 
   auto-cpu:
     <<: *automatic
