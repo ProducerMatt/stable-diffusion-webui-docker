@@ -21,7 +21,7 @@ RUN . /clone.sh CodeFormer https://github.com/sczhou/CodeFormer.git c5b4593074ba
 
 RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f14c9f7a5b4813144b2fb9
 RUN . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 60e5042ca0da89c14d1dd59d73883280f8fce991
-RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
+RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 55b1770386f8c25778702532def9429d2f8bc07c
 
 
 FROM alpine:3 as xformers
@@ -55,7 +55,7 @@ ENV ROOT=/stable-diffusion-webui
 
 
 COPY --from=download /git/ ${ROOT}
-RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
+RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/clip_interrogator/data/* ${ROOT}/interrogate
 RUN pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
 
