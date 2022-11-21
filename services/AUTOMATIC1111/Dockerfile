@@ -39,10 +39,11 @@ RUN pip install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url 
 RUN apt-get update && apt install fonts-dejavu-core rsync git jq moreutils -y && apt-get clean
 
 
+ARG SHA=8fdc02451b99ad183961271a85ca8cb4bb9b678a
 RUN <<EOF
 git clone https://github.com/ProducerMatt/stable-diffusion-webui.git
 cd stable-diffusion-webui
-git reset --hard 0c3273403f714cf8197e0cfab36cd67005837a58
+git reset --hard ${SHA}
 pip install -r requirements_versions.txt
 EOF
 
@@ -68,14 +69,6 @@ RUN pip install opencv-python-headless \
 
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
-
-ARG SHA=47a44c7e421b98ca07e92dbf88769b04c9e28f86
-RUN <<EOF
-cd stable-diffusion-webui
-git fetch
-git reset --hard ${SHA}
-pip install -r requirements_versions.txt
-EOF
 
 COPY . /docker
 
