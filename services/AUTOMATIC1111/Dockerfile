@@ -67,9 +67,6 @@ RUN pip install opencv-python-headless \
   git+https://github.com/openai/CLIP.git@d50d76daa670286dd6cacf3bcd80b5e4823fc8e1 \
   pyngrok
 
-# Note: don't update the sha of previous versions because the install will take forever
-# instead, update the repo state in a later step
-
 COPY . /docker
 
 RUN <<EOF
