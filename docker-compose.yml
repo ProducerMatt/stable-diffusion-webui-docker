@@ -27,9 +27,9 @@ services:
     <<: *base_service
     profiles: ["auto"]
     build: ./services/AUTOMATIC1111
-    image: sd-auto:17
+    image: sd-auto:18
     environment:
-      - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru --administrator
+      - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru --administrator --enable-insecure-extension-access
       - DEEPDANBOORU=1
 
   auto-cpu:
