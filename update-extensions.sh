@@ -21,5 +21,8 @@ popd
 pushd data/config/auto/scripts.git/test_my_prompt/test_my_prompt/scripts || exit
 cp -r test_my_prompt_custom_script.py $SCRIPTSDIR || exit
 popd
+pushd data/config/auto/scripts.git/auto1111-improved-prompt-matrix || exit
+cp -r improved_prompt_matrix.py $SCRIPTSDIR || exit
+popd
 
 cd $BOOKMARK || exit
