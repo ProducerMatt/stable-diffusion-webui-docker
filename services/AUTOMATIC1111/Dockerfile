@@ -39,10 +39,11 @@ RUN pip install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url 
 RUN apt-get update && apt install fonts-dejavu-core rsync git jq moreutils -y && apt-get clean
 
 
+ARG SHA=8fdc02451b99ad183961271a85ca8cb4bb9b678a
 RUN <<EOF
-git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+git clone https://github.com/ProducerMatt/stable-diffusion-webui.git
 cd stable-diffusion-webui
-git reset --hard 98947d173e3f1667eba29c904f681047dea9de90
+git reset --hard ${SHA}
 pip install -r requirements_versions.txt
 EOF
 
@@ -55,12 +56,11 @@ ENV ROOT=/stable-diffusion-webui
 
 
 COPY --from=download /git/ ${ROOT}
-RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
+RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/clip_interrogator/data/* ${ROOT}/interrogate
 RUN pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
 
-ARG DEEPDANBOORU="0"
-RUN [[ "${DEEPDANBOORU:-0}" == "0" ]] && : || pip install tensorflow-cpu==2.10 tensorflow-io==0.27.0 git+https://github.com/KichangKim/DeepDanbooru.git@edf73df4cdaeea2cf00e9ac08bd8a9026b7a7b26#egg=deepdanbooru
+RUN pip install tensorflow-cpu==2.10 tensorflow-io==0.27.0 git+https://github.com/KichangKim/DeepDanbooru.git@edf73df4cdaeea2cf00e9ac08bd8a9026b7a7b26#egg=deepdanbooru
 
 RUN pip install opencv-python-headless \
   git+https://github.com/TencentARC/GFPGAN.git@8d2447a2d918f8eba5a4a01463fd48e45126a379 \
@@ -80,7 +80,6 @@ pip install -r requirements_versions.txt
 EOF
 
 RUN pip install opencv-python-headless
-
 COPY . /docker
 
 RUN <<EOF
@@ -91,6 +90,8 @@ EOF
 
 WORKDIR ${ROOT}
 ENV CLI_ARGS=""
+ENV PYTORCH_CUDA_ALLOC_CONF="garbage_collection_threshold:0.6,max_split_size_mb:24"
+## Fixes OOM errors, get CUDNN_STATUS_NOT_INITIALIZED instead
 EXPOSE 7860
 ENTRYPOINT ["/docker/entrypoint.sh"]
 # run, -u to not buffer stdout / stderr

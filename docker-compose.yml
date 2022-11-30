@@ -29,7 +29,8 @@ services:
     build: ./services/AUTOMATIC1111
     image: sd-auto:19
     environment:
-      - CLI_ARGS=--allow-code --medvram --xformers --enable-insecure-extension-access
+      - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru --administrator --enable-insecure-extension-access
+      - DEEPDANBOORU=1
 
   auto-cpu:
     <<: *automatic
