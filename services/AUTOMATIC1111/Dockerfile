@@ -39,7 +39,7 @@ RUN pip install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url 
 RUN apt-get update && apt install fonts-dejavu-core rsync git jq moreutils -y && apt-get clean
 
 
-ARG SHA=8fdc02451b99ad183961271a85ca8cb4bb9b678a
+ARG SHA=b1ed0f686878cd4ccb594d38f221033a8e92f10c
 RUN <<EOF
 git clone https://github.com/ProducerMatt/stable-diffusion-webui.git
 cd stable-diffusion-webui
