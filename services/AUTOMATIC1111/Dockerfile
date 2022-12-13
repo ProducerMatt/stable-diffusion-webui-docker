@@ -21,7 +21,7 @@ RUN . /clone.sh CodeFormer https://github.com/sczhou/CodeFormer.git c5b4593074ba
 
 RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f14c9f7a5b4813144b2fb9
 RUN . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 5b3af030dd83e0297272d861c19477735d0317ec
-RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator e22b005ba59a9a16174a09665ca42924afc0e4ae
+RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
 
 
 FROM alpine:3 as xformers
@@ -71,7 +71,11 @@ RUN pip install opencv-python-headless \
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
 
+<<<<<<< HEAD
 ARG SHA=9e78d2c419732711e984c4478af15ece121d64fd
+=======
+ARG SHA=685f9631b56ff8bd43bce24ff5ce0f9a0e9af490
+>>>>>>> d97d257fd38d62e409c7f90c58f8a02d3efba215
 RUN <<EOF
 cd stable-diffusion-webui
 git fetch
@@ -79,7 +83,12 @@ git reset --hard ${SHA}
 pip install -r requirements_versions.txt
 EOF
 
+<<<<<<< HEAD
 RUN pip install opencv-python-headless
+=======
+RUN pip install opencv-python-headless transformers==4.24.0
+
+>>>>>>> d97d257fd38d62e409c7f90c58f8a02d3efba215
 COPY . /docker
 
 RUN <<EOF
@@ -94,5 +103,4 @@ ENV PYTORCH_CUDA_ALLOC_CONF="garbage_collection_threshold:0.6,max_split_size_mb:
 ## Fixes OOM errors, get CUDNN_STATUS_NOT_INITIALIZED instead
 EXPOSE 7860
 ENTRYPOINT ["/docker/entrypoint.sh"]
-# run, -u to not buffer stdout / stderr
 CMD python3 -u webui.py --listen --port 7860 ${CLI_ARGS}
