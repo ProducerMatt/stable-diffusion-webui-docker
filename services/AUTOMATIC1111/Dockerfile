@@ -41,7 +41,7 @@ RUN apt-get update && apt install fonts-dejavu-core rsync git jq moreutils -y &&
 
 ARG SHA=b1ed0f686878cd4ccb594d38f221033a8e92f10c
 RUN <<EOF
-git clone https://github.com/ProducerMatt/stable-diffusion-webui.git
+git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 cd stable-diffusion-webui
 git reset --hard ${SHA}
 pip install -r requirements_versions.txt
