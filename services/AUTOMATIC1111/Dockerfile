@@ -71,11 +71,7 @@ RUN pip install opencv-python-headless \
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
 
-<<<<<<< HEAD
-ARG SHA=9e78d2c419732711e984c4478af15ece121d64fd
-=======
 ARG SHA=685f9631b56ff8bd43bce24ff5ce0f9a0e9af490
->>>>>>> d97d257fd38d62e409c7f90c58f8a02d3efba215
 RUN <<EOF
 cd stable-diffusion-webui
 git fetch
@@ -83,12 +79,8 @@ git reset --hard ${SHA}
 pip install -r requirements_versions.txt
 EOF
 
-<<<<<<< HEAD
-RUN pip install opencv-python-headless
-=======
 RUN pip install opencv-python-headless transformers==4.24.0
 
->>>>>>> d97d257fd38d62e409c7f90c58f8a02d3efba215
 COPY . /docker
 
 RUN <<EOF
