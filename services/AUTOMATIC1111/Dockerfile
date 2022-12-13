@@ -56,7 +56,7 @@ ENV ROOT=/stable-diffusion-webui
 
 
 COPY --from=download /git/ ${ROOT}
-RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/clip_interrogator/data/* ${ROOT}/interrogate
+RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
 RUN pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
 
