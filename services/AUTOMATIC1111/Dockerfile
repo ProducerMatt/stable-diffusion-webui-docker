@@ -57,29 +57,30 @@ ENV ROOT=/stable-diffusion-webui
 
 COPY --from=download /git/ ${ROOT}
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
-RUN pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip \
+  pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
 
-
-RUN pip install tensorflow-cpu==2.10 tensorflow-io==0.27.0 git+https://github.com/KichangKim/DeepDanbooru.git@edf73df4cdaeea2cf00e9ac08bd8a9026b7a7b26#egg=deepdanbooru
-
-RUN pip install opencv-python-headless \
+RUN --mount=type=cache,target=/root/.cache/pip \
+  pip install opencv-python-headless \
   git+https://github.com/TencentARC/GFPGAN.git@8d2447a2d918f8eba5a4a01463fd48e45126a379 \
   git+https://github.com/openai/CLIP.git@d50d76daa670286dd6cacf3bcd80b5e4823fc8e1 \
   git+https://github.com/mlfoundations/open_clip.git@bb6e834e9c70d9c27d0dc3ecedeebeaeb1ffad6b \
-  pyngrok
+  pyngrok \
+  tensorflow-cpu==2.10 tensorflow-io==0.27.0 git+https://github.com/KichangKim/DeepDanbooru.git@edf73df4cdaeea2cf00e9ac08bd8a9026b7a7b26#egg=deepdanbooru
 
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
 
 ARG SHA=685f9631b56ff8bd43bce24ff5ce0f9a0e9af490
-RUN <<EOF
+RUN --mount=type=cache,target=/root/.cache/pip <<EOF
 cd stable-diffusion-webui
 git fetch
 git reset --hard ${SHA}
 pip install -r requirements_versions.txt
 EOF
 
-RUN pip install opencv-python-headless transformers==4.24.0
+RUN --mount=type=cache,target=/root/.cache/pip \
+  pip install opencv-python-headless transformers==4.24
 
 COPY . /docker
 
