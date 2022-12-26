@@ -26,31 +26,29 @@ RUN . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interr
 
 FROM alpine:3 as xformers
 RUN apk add aria2
-RUN aria2c -x 10 --dir / --out wheel.whl 'https://github.com/AbdBarho/stable-diffusion-webui-docker/releases/download/3.1.0/xformers-0.0.15.dev0+4e3631d.d20221125-cp310-cp310-linux_x86_64.whl'
+RUN aria2c -x 5 --dir / --out wheel.whl 'https://github.com/AbdBarho/stable-diffusion-webui-docker/releases/download/4.0.0/xformers-0.0.16rc393-cp310-cp310-manylinux2014_x86_64.whl'
 
 FROM python:3.10-slim
 
 SHELL ["/bin/bash", "-ceuxo", "pipefail"]
 
-ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1 PIP_NO_CACHE_DIR=1
+ENV DEBIAN_FRONTEND=noninteractive PIP_PREFER_BINARY=1
 
-RUN pip install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
+RUN PIP_NO_CACHE_DIR=1 pip install torch==1.12.1+cu116 torchvision==0.13.1+cu116 --extra-index-url https://download.pytorch.org/whl/cu116
 
 RUN apt-get update && apt install fonts-dejavu-core rsync git jq moreutils -y && apt-get clean
 
 
-ARG SHA=98947d173e3f1667eba29c904f681047dea9de90
-RUN <<EOF
+RUN --mount=type=cache,target=/root/.cache/pip <<EOF
 git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 cd stable-diffusion-webui
-git reset --hard ${SHA}
+git reset --hard 4af3ca5393151d61363c30eef4965e694eeac15e
 pip install -r requirements_versions.txt
 EOF
 
-
-COPY --from=xformers /wheel.whl xformers-0.0.15-cp310-cp310-linux_x86_64.whl
-RUN pip install xformers-0.0.15-cp310-cp310-linux_x86_64.whl && rm xformers-0.0.15-cp310-cp310-linux_x86_64.whl
-
+RUN --mount=type=cache,target=/root/.cache/pip  \
+  --mount=type=bind,from=xformers,source=/wheel.whl,target=/xformers-0.0.15-cp310-cp310-linux_x86_64.whl \
+  pip install triton /xformers-0.0.15-cp310-cp310-linux_x86_64.whl
 
 ENV ROOT=/stable-diffusion-webui
 
@@ -71,7 +69,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 # Note: don't update the sha of previous versions because the install will take forever
 # instead, update the repo state in a later step
 
-ARG SHA=685f9631b56ff8bd43bce24ff5ce0f9a0e9af490
+ARG SHA=4af3ca5393151d61363c30eef4965e694eeac15e
 RUN --mount=type=cache,target=/root/.cache/pip <<EOF
 cd stable-diffusion-webui
 git fetch
@@ -80,14 +78,13 @@ pip install -r requirements_versions.txt
 EOF
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-  pip install opencv-python-headless transformers==4.24
+  pip install -U opencv-python-headless transformers>=4.24
 
 COPY . /docker
 
 RUN <<EOF
 python3 /docker/info.py ${ROOT}/modules/ui.py
-mv  ${ROOT}/style.css ${ROOT}/user.css
-sed -i 's/os.rename(tmpdir, target_dir)/shutil.move(tmpdir,target_dir)/' ${ROOT}/modules/ui_extensions.py
+mv ${ROOT}/style.css ${ROOT}/user.css
 EOF
 
 WORKDIR ${ROOT}
