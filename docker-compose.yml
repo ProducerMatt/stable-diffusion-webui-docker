@@ -27,7 +27,7 @@ services:
     <<: *base_service
     profiles: ["auto"]
     build: ./services/AUTOMATIC1111
-    image: sd-auto:30
+    image: sd-auto:33
     environment:
       - CLI_ARGS=--allow-code --medvram --xformers --deepdanbooru --administrator --enable-insecure-extension-access --api
       - DEEPDANBOORU=1
@@ -53,7 +53,7 @@ services:
     <<: *base_service
     profiles: ["sygil"]
     build: ./services/sygil/
-    image: sd-sygil:15
+    image: sd-sygil:16
     environment:
       - CLI_ARGS=--optimized-turbo
       - USE_STREAMLIT=0
