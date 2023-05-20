@@ -20,3 +20,9 @@
 /VAE
 /embeddings
 /Lora
+/ControlNet
+/openpose
+/ModelScope
+/LyCORIS
+/GLIGEN
+/CLIPEncoder
